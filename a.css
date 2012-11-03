@@ -1,0 +1,84 @@
+*{
+    margin: 0px;
+    padding: 0px;
+}
+
+#myCanvas{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: whitesmoke;
+    cursor: crosshair;
+    opacity: 0.8;
+    width:500px;
+    height:500px;
+}
+
+#skin{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index:-10;
+}
+
+#canvasWrap{
+    position: relative;
+    height: 500px;
+    width: 500px;
+}
+
+.datframe{
+    background-color: #aabbcc;
+    border: solid 1px;
+    width: 100px;
+    height: 300px;
+    font-size: xx-small;
+    overflow: auto;
+    display: none;
+}
+.datlist{
+    list-style-type: none;
+    z-index: -3;
+}
+.datlist li{
+    border-bottom: dashed 1px;
+}
+
+#colorPalet{
+    width: 42px;
+    height: 242px;
+    position: absolute;
+    top: 0px;
+    left: 500px;
+}
+#colorPalet input{
+    width: 30px;
+    height: 30px;
+}
+
+.brushSetting{
+    width:230px;
+    height:200px;
+    font-size: x-small;
+    border: ridge 2px;
+    position: absolute;
+    top: 242px;
+    left: 500px;
+    overflow: auto;
+}
+
+.brushSetting input{
+    width:100px;
+}
+
+#copyButton{
+    position: absolute;
+    top: 452px;
+    left: 500px;
+
+}
+#forcopy{
+    position: absolute;
+    top: 472px;
+    left: 500px;
+}
