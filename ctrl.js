@@ -24,6 +24,11 @@ var mainCtr = function($scope){
     $scope.scalex = 100;
     $scope.scaley = 100;
 
+    $scope.fParam = 120;
+    $scope.lambda = 120;
+    $scope.fcmTypes = ['sfcm', 'efcm', 'efcmy', 'efca', 'fcma'];
+    $scope.fcmType = 'sfcm';
+
     $scope.colors = ['red', 'blue', 'green', 'orange', 'violet', 'brown', 'black'];
     $scope.currentColor = 'red';
 
@@ -124,6 +129,24 @@ var mainCtr = function($scope){
                 break;
         }
     });
+
+    $('#clustering').click(function(){
+        var txt = $('.datlist').text();
+        $.post('/wsgi/fcm', {
+            fcmType: $scope.fcmType,
+            points: txt,
+            fParam: $scope.fParam,
+            lambda: $scope.lambda
+        })
+            .done(function(data){
+                $('#result').fadeOut('fast')
+                .fadeIn('fast')
+                .css('background-image', 'url("/wsgi/static/img.png?'+(new Date()).getTime()+'")');
+                console.log(data);
+            });
+    });
+
+
 }
 
 function clearCanvas(canvas, context){
