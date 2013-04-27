@@ -14,6 +14,7 @@ var mainCtr = function($scope){
     context.lineWidth = 2;
 
     $scope.data = points;
+    $scope.cache = [];
     $scope.count = 0;
     $scope.num = 20;
     $scope.radius = 50;
@@ -29,24 +30,46 @@ var mainCtr = function($scope){
     $scope.fcmTypes = ['sfcm', 'efcm', 'efcmy', 'efca', 'fcma'];
     $scope.fcmType = 'sfcm';
 
-    $scope.colors = ['red', 'blue', 'green', 'orange', 'violet', 'brown', 'black'];
+    $scope.colors = ['red', 'blue', 'green', 'orange', 'violet', 'black'];
     $scope.currentColor = 'red';
 
-    $scope.brushes = ['onepoint', 'random', 'line'];
+    $scope.brushes = ['onepoint', 'random', 'Gausssian'];
     $scope.currentBrush = 'random';
 
-    $scope.draw = function(e){
-        addPoint(e);
+    $scope.canvasTop = 1;
+    $scope.canvasLeft = 0;
+    $scope.canvasRight = 1;
+    $scope.canvasBottom = 0;
+
+
+    $scope.draw = function(){
         clearCanvas(canvas, context);
+        context.lineWidth = 3;
+        data = ''
+        /*
         for(i=0; i<points.length; i++){
             drawPoint(canvas, context, points[i].x, points[i].y, points[i].color);
+            scaled = $scope.rescale(points[i]);
+            data += scaled.x.toFixed(3) + ' ' + scaled.y.toFixed(3) + ' ' + points[i].color + "\n";
         }
+        */
+        for(i=0; i<points.length; i++){
+            for(var j=0; j<20; j++){
+                drawPoint(canvas, context, points[i][j].x, points[i][j].y, points[i][j].color);
+                scaled = $scope.rescale(points[i][j]);
+                data += scaled.x.toFixed(3) + ' ' + scaled.y.toFixed(3) + ' ' + points[i][j].color + "\n";
+                $scope.count++
+            }
+        }
+        $('.datlist').html(data);
+        $('#download').replaceWith(downloadAsFile('data.txt', data));
     }
 
     $scope.clear = function(){
         points = [];
         $scope.data = points;
         clearCanvas(canvas, context);
+        clearList();
     }
 
     $scope.changeColor = function(color){
@@ -65,21 +88,24 @@ var mainCtr = function($scope){
         brushCtx.scale($scope.scalex/100, $scope.scaley/100);
         brushCtx.translate(-canvas.width/2, -canvas.height/2);
         brushCtx.arc(canvas.width/2, canvas.height/2 , $scope.radius, -$scope.sangl*Math.PI/180, -$scope.eangl*Math.PI/180, true);
-        brushCtx.stroke();
+        brushCtx.arc(canvas.width/2, canvas.height/2 , $scope.radius*((100-$scope.brushWidth)/100), -$scope.eangl*Math.PI/180, -$scope.sangl*Math.PI/180, false);
+        brushCtx.fill();
         brushCtx.closePath();
     };
 
     $scope.move = function(e){
         $scope.x = e.offsetX;
         $scope.y = e.offsetY;
+        $scope.scaledX = $scope.rescale({x:$scope.x, y:$scope.y}).x;
+        $scope.scaledY = $scope.rescale({x:$scope.x, y:$scope.y}).y;
         $scope.changeBrush();
         $scope.style = {
-            top:e.offsetY - canvas.height/2+'px',
-            left:e.offsetX - canvas.width/2+'px'
+            top: e.offsetY - canvas.height/2+'px',
+            left: e.offsetX - canvas.width/2+'px'
         };
     };
 
-    addPoint = function(e){
+    $scope.addPoint = function(e){
             switch($scope.currentBrush){
                 case 'onepoint':
                     tmpx = e.offsetX; 
@@ -92,6 +118,7 @@ var mainCtr = function($scope){
                     thMax = $scope.eangl*Math.PI/180;
                     thMin = $scope.sangl*Math.PI/180;
                     tmprot = $scope.rotate*Math.PI/180;
+                    tmplist = Array();
                     for(var i=0; i<$scope.num; i++){
                         tmpR = Math.floor(Math.random()*(rMax2 - rMin2) + rMin2);
                         tmpTh = Math.random()*(thMax - thMin) + thMin;
@@ -101,23 +128,29 @@ var mainCtr = function($scope){
                         tmpy *= $scope.scaley/100.0;
                         tmpx2 = tmpx*Math.cos(tmprot) - tmpy*Math.sin(tmprot);
                         tmpy2 = tmpx*Math.sin(tmprot) + tmpy*Math.cos(tmprot);
-                        points.push({x: tmpx2+e.offsetX , y: tmpy2+e.offsetY, color: $scope.currentColor});
+                        //points.push({x: tmpx2+e.offsetX , y: tmpy2+e.offsetY, color: $scope.currentColor});
+                        tmplist.push({x: tmpx2+e.offsetX , y: tmpy2+e.offsetY, color: $scope.currentColor});
                     }
+                    points.push(tmplist);
                     break;
-                case 'line':
-                    startX = mouse.downX;
-                    startY = mouse.downY;
-                    endX = mouse.upX;
-                    endY = mouse.upY;
+                case 'Gaussian':
+                    muX = e.offsetX; 
+                    muY = e.offsetY;
+                    s = $scope.radius;
                     for(var i=0; i<$scope.num; i++){
-                        tmpx = (startX - endX)*i/$scope.num + e.offsetX;
-                        tmpy = (startY - endY)*i/$scope.num + e.offsetY;
-                        points.push({x: tmpx, y: tmpy, color: $scope.currentColor});
+                        x = Math.random();
+                        y = Math.random();
+                        c = Math.sqrt(-2.0 * Math.log(x));
+                        z1 = c * Math.cos(2.0 * Math.PI * y) * s + muX;
+                        z2 = c * Math.sin(2.0 * Math.PI * y) * s + muY;
+                        console.log(z1);
+                        points.push({x: z1, y: z2, color: $scope.currentColor});
                     }
                     break;
                 default :
                     break;
             }
+            $scope.draw();
         }
 
     $(document).keydown(function(e){
@@ -127,16 +160,28 @@ var mainCtr = function($scope){
             case "D":
                 $scope.clear();
                 break;
+            case "U":
+                $scope.undo();
+                break;
+            case "R":
+                $scope.redo();
+                break;
         }
     });
 
     $('#clustering').click(function(){
-        var txt = $('.datlist').text();
+        var txt = $('.datlist').html();
+        console.log(txt);
         $.post('/wsgi/fcm', {
             fcmType: $scope.fcmType,
             points: txt,
             fParam: $scope.fParam,
-            lambda: $scope.lambda
+            lambda: $scope.lambda,
+            cls: $scope.cls,
+            canvasTop: $scope.canvasTop,
+            canvasLeft: $scope.canvasLeft,
+            canvasRight: $scope.canvasRight,
+            canvasBottom: $scope.canvasBottom
         })
             .done(function(data){
                 $('#result').fadeOut('fast')
@@ -146,14 +191,78 @@ var mainCtr = function($scope){
             });
     });
 
+    function downloadAsFile(fileName, content){
+        var blob = new Blob([content]);
+        var url = window.URL || window.webkitURL;
+        var blobURL = url.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.download = fileName;
+        a.href = blobURL;
+        a.id = 'download';
+        a.innerHTML = 'download';
+        console.log(a);
+        return a;
+    }
+
+    $scope.rescale = function(point){
+        result = [];
+        size = 500.0;
+        t = Number($scope.canvasTop);
+        l = Number($scope.canvasLeft);
+        r = Number($scope.canvasRight);
+        b = Number($scope.canvasBottom);
+        vRange = t - b;
+        hRange = r - l;
+        result.x = Number((point.x / size) * hRange + l);
+        result.y = Number( (((size - point.y) / size) * vRange + b));
+        return result;
+    }
+
+    $scope.undo = function(){
+        //var l = points.length;
+        //$scope.cache.push(points.slice(l-1, l));
+        //$scope.cache.push(points.slice(l-1, l));
+        //console.log($scope.cache);
+        //points = points.slice(0, l-1);
+        if (points.length != 0){
+            $scope.cache.push(points.pop());
+            $scope.draw();
+        }
+    }
+    $scope.redo = function(){
+        if ($scope.cache.length != 0){
+            console.log('redo');
+            points.push($scope.cache.pop());
+            $scope.draw();
+        }
+    }
+
+
+    function clearCanvas(canvas, context){
+        $scope.count = 0;
+        context.clearRect(0,0,canvas.width, canvas.height);
+        context.lineWidth = 0.5;
+        for(i=0; i<500; i+=50){
+            context.strokeStyle = 'black';
+            context.beginPath();
+            context.moveTo(0, i);
+            context.lineTo(500, i);
+            context.moveTo(i, 0);
+            context.lineTo(i, 500);
+            context.stroke();
+        }
+    }
+
 
 }
 
-function clearCanvas(canvas, context){
-    context.clearRect(0,0,canvas.width, canvas.height);
+
+
+
+
+function clearList(){
+    $('.datlist').html('');
 }
-
-
 
 function drawPoint(canvas, context, x, y, color){
     context.strokeStyle = color;
@@ -162,16 +271,3 @@ function drawPoint(canvas, context, x, y, color){
     context.closePath();
     context.stroke();
 }
-
-$(function(){
-    $('#copyButton').click(function(){
-        var txt = $('.datlist').text();
-        txt = txt.replace(/ /g,"");
-        txt = txt.replace(/^\s*\n/g,"");
-        txt = txt.replace(/\n\n/g,"\n");
-        $('#forcopy').text(txt).select();
-    });
-    $('#myCanvas').click(function(){
-        $('#forcopy').text("");
-    });
-});

@@ -1,79 +1,114 @@
-*{
-    margin: 0px;
-    padding: 0px;
-}
+* {
+  margin: 0px;
+  padding: 0px; }
 
-#myCanvas{
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    background-color: whitesmoke;
-    cursor: crosshair;
-    opacity: 0.8;
-    width:500px;
-    height:500px;
-}
+#contents {
+  width: 980px;
+  margin: auto; }
+  #contents:after {
+    content: '';
+    display: block;
+    clear: both; }
 
-#skin{
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    z-index:-10;
-}
+#side {
+  width: 310px;
+  float: left; }
 
-#canvasWrap{
-    position: relative;
-    height: 500px;
-    width: 500px;
-}
+#myCanvas {
+  background-color: whitesmoke;
+  cursor: crosshair;
+  opacity: 0.8;
+  width: 500px;
+  height: 500px;
+  position: absolute; }
 
-.datframe{
-    background-color: #aabbcc;
-    border: solid 1px;
-    width: 100px;
-    height: 300px;
-    font-size: xx-small;
-    overflow: auto;
-    display: none;
-}
-.datlist{
-    list-style-type: none;
-    z-index: -3;
-}
-.datlist li{
-    border-bottom: dashed 1px;
-}
+#skin {
+  z-index: -10;
+  position: absolute; }
 
-#colorPalet{
-    width: 42px;
-    height: 242px;
-    position: absolute;
-    top: 0px;
-    left: 500px;
-}
-#colorPalet input{
-    width: 30px;
-    height: 30px;
-}
+#content-canvas,
+#content-tools,
+#content-datlist {
+  position: relative;
+  height: 500px; }
 
-.brushSetting{
-    width:300px;
-    height:200px;
-    border: ridge 2px;
-    position: absolute;
-    top: 242px;
-    left: 500px;
-    overflow: auto;
-}
+#content-canvas {
+  float: left;
+  width: 520px;
+  height: 530px; }
 
-#copyButton{
-    position: absolute;
-    top: 452px;
-    left: 500px;
-}
+#content-tools {
+  width: 300px;
+  float: left; }
 
-#forcopy{
-    position: absolute;
-    top: 472px;
-    left: 500px;
-}
+#content-datlist {
+  width: 150px;
+  float: left; }
+
+#canvasBase {
+  top: 10px;
+  left: 10px;
+  position: relative; }
+
+.datlist {
+  height: 530px;
+  width: 150px; }
+
+#colorPalet {
+  width: 300px;
+  height: 50px; }
+  #colorPalet button {
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
+    margin: 5px; }
+
+fieldset {
+  margin: 5px;
+  width: 300px;
+  border: ridge 2px;
+  overflow: auto; }
+  fieldset label, fieldset input {
+    overflow: hidden;
+    display: block;
+    float: left; }
+  fieldset label {
+    width: 35%;
+    text-align: right; }
+    fieldset label:after {
+      content: ":";
+      margin: 0 0.5em; }
+  fieldset input[type="range"] {
+    text-align: right;
+    width: 50%; }
+  fieldset input[type="text"] {
+    text-align: right;
+    width: 8%;
+    border-style: none; }
+  fieldset div:after {
+    display: block;
+    content: "";
+    clear: both; }
+  fieldset legend {
+    margin: 0.7em; }
+
+#info {
+  width: 500px;
+  height: 20px;
+  position: absolute;
+  top: 510px;
+  left: 10px; }
+  #info dt, #info dd, #info button {
+    display: block;
+    float: left; }
+  #info dl {
+    display: block;
+    float: right; }
+  #info dt:after {
+    content: ':';
+    margin: 0.4em; }
+  #info dd {
+    margin-right: 1em; }
+  #info button {
+    height: 18px;
+    margin-right: 1.5em; }
