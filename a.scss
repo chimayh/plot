@@ -1,0 +1,158 @@
+$canvasWidth: 500px;
+$canvasHeight: 500px;
+$canvasMarginBottom: 20px;
+$canvasMarginOthers: 10px;
+$sidecontentsWidth: 300px;
+$datlistWidth: 150px;
+$sideMargin: 5px;
+$sideWidth: $sidecontentsWidth + $sideMargin * 2;
+$mainWidth: $canvasWidth + $canvasMarginOthers * 2;
+$mainHeight: $canvasHeight + $canvasMarginOthers + $canvasMarginBottom;
+
+*{
+    margin: 0px;
+    padding: 0px;
+}
+
+#contents{
+    //background-color: red;
+    width: $mainWidth + $sideWidth + $datlistWidth;
+    margin: auto;
+    &:after{
+        content: '';
+        display: block;
+        clear: both;
+    }
+}
+
+#side{
+    width: $sideWidth;
+    float: left;
+}
+
+#myCanvas{
+    background-color: whitesmoke;
+    cursor: crosshair;
+    opacity: 0.8;
+    width: $canvasWidth;
+    height: $canvasHeight;
+    position: absolute;
+}
+
+#skin{
+    z-index:-10;
+    position: absolute;
+}
+
+
+#content-canvas,
+#content-tools,
+#content-datlist{
+    position: relative;
+    //width: $canvasWidth;
+    height: $canvasHeight;
+}
+
+#content-canvas{
+    float:left;
+    width: $mainWidth;
+    height: $mainHeight;
+}
+#content-tools{
+    width: $sidecontentsWidth;
+    float: left;
+}
+#content-datlist{
+    width: $datlistWidth;
+    float: left;
+}
+
+#canvasBase{
+    top: $canvasMarginOthers;
+    left: $canvasMarginOthers;
+    position: relative;
+}
+
+.datframe{
+    //background-color: #aabbcc;
+}
+.datlist{
+    height: $mainHeight;
+    width: $datlistWidth;
+}
+
+#colorPalet{
+    width: $sidecontentsWidth;
+    height: 50px;
+    button{
+        width: 40px;
+        height: 40px;
+        border-radius: 40px;
+        margin: 5px
+    }
+}
+
+fieldset{
+    margin: $sideMargin;
+    width: $sidecontentsWidth;
+    border: ridge 2px;
+    overflow: auto;
+    label, input{
+        overflow: hidden;
+        display: block;
+        float: left;
+    }
+    label{
+        width: 35%;
+        text-align: right;
+        &:after{
+            content:":";
+            margin: 0 0.5em;
+        }
+    }
+    input[type="range"]{
+        text-align: right;
+        width: 50%;
+    }
+    input[type="text"]{
+        text-align: right;
+        width: 8%;
+        border-style: none;
+    }
+    div:after{
+                display:block;
+                content: "";
+                clear:both;
+    }
+    legend{
+        margin: 0.7em;
+    }
+}
+
+#info{
+    width: $canvasWidth;
+    height: $canvasMarginBottom;
+    position: absolute;
+    top: $canvasHeight + $canvasMarginOthers;
+    left: $canvasMarginOthers;
+    dt, dd, button{
+        display:block;
+        float:left;
+    }
+    dl {
+        display: block;
+        float: right;
+    }
+    dt:after{
+        content: ':';
+        margin: 0.4em;
+    }
+    dd{
+        margin-right: 1em;
+    }
+    button{
+        height: $canvasMarginBottom * 0.9;
+        margin-right: 1.5em;
+    }
+}
+

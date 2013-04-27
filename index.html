@@ -9,108 +9,149 @@
     <script src='http://code.jquery.com/jquery-1.8.2.js'></script>
     <script src='http://code.jquery.com/ui/1.9.0/jquery-ui.js'></script>
     <script src='ctrl.js'></script>
-    <script src='canvas.js'></script>
-    <title>Sample Creator</title>
+    <title>Plotter</title>
 </head>
 
 <body ng-controller='mainCtr' >
-<h3>Data creator by drawing</h3>
 
-<div class='datframe'>
-<ul class='datlist'>
-    <li  ng-repeat='point in data' >
-    {{point.x/50 |number:2}}, {{point.y/50|number:2}}, {{point.color}}
-    </li>
-</ul>
-</div>
+<h3>PLOTTER [beta]</h3>
+<p>plot &amp; download</p>
 
-    <div id='tmpresult' style='width:500px; height:500px; position:absolute; top:0px; right:0px; -webkit-transform:scaleX(-1) rotate(180deg) '></div>
-    <div id='result' style='width:500px; height:500px; position:absolute; top:0px; right:0px;'></div>
-<p>num: {{data.length}}</p>
-<div id='canvasWrap' ng-mosueleave>
-    <canvas id='skin' width=500px height=500px ng-style=style >canvas is here.</canvas>
-    <canvas id='myCanvas' width=500px height=500px ng-click=draw($event) ng-mousemove=move($event)>canvas is here.</canvas>
-    <div id='colorPalet' >
-        <input type='button' style='background-color:{{color}}' ng-repeat='color in colors' ng-click=changeColor(color)></button>
+
+<div id='contents'>
+
+<!-- ******************************************************************** -->
+    <div id='content-tools'> 
+        <div id='colorPalet' >
+            <button style='background-color:{{color}}' ng-repeat='color in colors' ng-click=changeColor(color)></button>
+        </div>
+
+        <fieldset class='brushSetting'>
+            <legend>Brush</legend>
+                <div>
+                <label for='currentBrush'>type</label>
+                <select name='currentBrush' ng-model='currentBrush' ng-options="brush for brush in brushes" ng-change=changeBrush()></select>
+                </div>
+
+                <div>
+                <label for='num'>num</label>
+                <input type='range' name='num' max='300' min='1' ng-model='num' ng-change='changeBrush()'>
+                <input type='text' size=3 maxlength=3 ng-change={{num}} ng-model=num>
+                </div>
+
+                <div>
+                <label for='radius'>radius</label>
+                <input type='range' name='radius' max='250' min='1' ng-model='radius' ng-change='changeBrush()'>
+                <input type='text' size=3 maxlength=3 placeholder={{radius}} ng-model=radius>
+                </div>
+                
+                <div>
+                <label for='scaley'>scaleY</label>
+                <input type='range' name='scaley' max='100' min='1' ng-model='scaley' ng-change='changeBrush()'>
+                <input type='text' size=3 maxlength=3 placeholder={{scaley}} ng-model=scaley>
+                </div>
+
+                <div>
+                <label for='scalex'>scaleX</label>
+                <input type='range' name='scalex' max='100' min='1' ng-model='scalex' ng-change='changeBrush()'>
+                <input type='text' size=3 maxlength=3 placeholder={{scalex}} ng-model=scalex>
+                </div>
+
+                <div>
+                <label for='rotate'>rotate</label>
+                <input type='range' name='rotate' max='360' min='0' ng-model='rotate' ng-change='changeBrush()'>
+                <input type='text' size=3 maxlength=3 placeholder={{rotate}} ng-model=rotate>
+                </div>
+
+                <div>
+                <label for='brushWidth'>brushWidth</label>
+                <input type='range' name='brushWidth' max='100' min='1' ng-model='brushWidth' ng-change='changeBrush()'>
+                <input type='text' size=3 maxlength=3 placeholder={{brushWidth}} ng-model=brushWidth>
+                </div>
+
+                <div>
+                <label for='sangl'>startAngle</label>
+                <input type='range' name='sangl' max='360' min='0' ng-model='sangl' ng-change='changeBrush()'>
+                <input type='text' size=3 maxlength=3 placeholder={{sangl}} ng-model=sangl>
+                </div>
+
+                <div>
+                <label for='eangl'>endAngle</label>
+                <input type='range' name='eangl' max='360' min='0' ng-model='eangl' ng-change='changeBrush()'>
+                <input type='text' size=3 maxlength=3 placeholder={{eangl}} ng-model=eangl>
+                </div>
+        </fieldset>
+        <fieldset>
+            <legend>Clustering <strong>(disabled)</strong></legend>
+            <div>
+            <label for='fcmType'>Type</label>
+            <select name='fcmType' ng-model='fcmType' ng-options="i for i in fcmTypes" ></select>
+            <button id='clustering' disabled>Run</button>
+            </div>
+            <div>
+            <label for='cls'>class</label>
+            <input type='number' name='cls' placeholder='2' ng-model='cls' ng-options="i for i in fcmTypes" >
+            </div>
+            <div>
+            <label for='fParam'>Param m</label>
+            <input type='range' name='fParam' max='300' min='0' ng-model='fParam' ng-change='changeBrush()'>
+            <input type='text' size=3 maxlength=3 placeholder=fParam ng-model=fParam>
+            </div>
+            <div>
+            <label for='lambda'>lambda</label>
+            <input type='range' name='lambda' max='300' min='0' ng-model='lambda' ng-change='changeBrush()'>
+            <input type='text' size=3 maxlength=10 placeholder=lambda ng-model=lambda>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Canvas</legend>
+            <div>
+            <label for='lambda'>Top</label>
+            <input type='text' size=3 maxlength=10 placeholder=canvasTop ng-model=canvasTop>
+            </div>
+            <div>
+            <label for='lambda'>Left</label>
+            <input type='text' size=3 maxlength=10 placeholder=canvasLeft ng-model=canvasLeft>
+            </div>
+            <div>
+            <label for='lambda'>Right</label>
+            <input type='text' size=3 maxlength=10 placeholder=canvasRight ng-model=canvasRight>
+            </div>
+            <div>
+            <label for='lambda'>Bottom</label>
+            <input type='text' size=3 maxlength=10 placeholder=canvasBottom ng-model=canvasBottom>
+            </div>
+        </fieldset>
     </div>
-    <fieldset class='brushSetting'>
-        <legend>Setting</legend>
-            <p>
-            <label for='currentBrush'>type:</label>
-            <select name='currentBrush' ng-model='currentBrush' ng-options="brush for brush in brushes" ng-change=changeBrush()></select>
-            </p>
+<!-- ******************************************************************** -->
+    <div id='content-canvas' ng-mosueleave>
+        <div id='canvasBase'>
+            <canvas id='skin' width=500px height=500px ng-style=style >canvas is here.</canvas>
+            <canvas id='myCanvas' width=500px height=500px ng-click=addPoint($event) ng-mousemove=move($event)>canvas is here.</canvas>
+            <div id='info'>
+                <button id='clearButton' ng-click=clear() >Clear [D]</button>
+                <button id='undoButton' ng-click=undo() >Undo [U]</button>
+                <button id='redoButton' ng-click=redo() >Redo [R]</button>
+                <dl>
+                    <dt>Total</dt><dd>{{count}}</dd>
+                    <dt>(x,y)</dt><dd>({{scaledX | number:2}}, {{scaledY | number:2}})</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+   
+<!-- ******************************************************************** -->
+    <div id='content-datlist'>
+        <div class='datframe'>
+            <textarea class='datlist'></textarea>
+        </div>
+            <div id='download'></div>
+    </div>
+<!-- ******************************************************************** -->
+</div> <!-- contents -->
 
-            <p>
-            <label for='num'>num:</label>
-            <input type='range' name='num' max='100' min='1' ng-model='num' ng-change='changeBrush()'>
-            <input type='text' size=3 maxlength=3 placeholder={{num}} ng-model=num>
-            </p>
+<!-- <div id='result' style='width:500px; height:500px;'></div> -->
 
-            <p>
-            <label for='radius'>radius:</label>
-            <input type='range' name='radius' max='250' min='1' ng-model='radius' ng-change='changeBrush()'>
-            <input type='text' size=3 maxlength=3 placeholder={{radius}} ng-model=radius>
-            </p>
-
-            <p>
-            <label for='scaley'>scaleY:</label>
-            <input type='range' name='scaley' max='100' min='1' ng-model='scaley' ng-change='changeBrush()'>
-            <input type='text' size=3 maxlength=3 placeholder={{scaley}} ng-model=scaley>
-            </p>
-
-            <p>
-            <label for='scalex'>scaleX:</label>
-            <input type='range' name='scalex' max='100' min='1' ng-model='scalex' ng-change='changeBrush()'>
-            <input type='text' size=3 maxlength=3 placeholder={{scalex}} ng-model=scalex>
-            </p>
-
-            <p>
-            <label for='rotate'>rotate:</label>
-            <input type='range' name='rotate' max='360' min='0' ng-model='rotate' ng-change='changeBrush()'>
-            <input type='text' size=3 maxlength=3 placeholder={{rotate}} ng-model=rotate>
-            </p>
-
-            <p>
-            <label for='brushWidth'>brushWidth:</label>
-            <input type='range' name='brushWidth' max='100' min='1' ng-model='brushWidth' ng-change='changeBrush()'>
-            <input type='text' size=3 maxlength=3 placeholder={{brushWidth}} ng-model=brushWidth>
-            </p>
-
-            <p>
-            <label for='sangl'>Start angl:</label>
-            <input type='range' name='sangl' max='360' min='0' ng-model='sangl' ng-change='changeBrush()'>
-            <input type='text' size=3 maxlength=3 placeholder={{sangl}} ng-model=sangl>
-            </p>
-
-            <p>
-            <label for='eangl'>End angl:</label>
-            <input type='range' name='eangl' max='360' min='0' ng-model='eangl' ng-change='changeBrush()'>
-            <input type='text' size=3 maxlength=3 placeholder={{eangl}} ng-model=eangl>
-            </p>
-    </fieldset>
-
-    <button id='copyButton'>copy</button>
-    <textarea id='forcopy' placeholder='push copy button and ctrl+c'></textarea>
-</div>
-
-<input id='clearButton' type='button' value='clear (key:d)' ng-click=clear() >
-<button id='clustering'>clustering</button>
-
-
-<p>
-<label for='fcmType'>type:</label>
-<select name='fcmType' ng-model='fcmType' ng-options="i for i in fcmTypes" ></select>
-</p>
-<p>
-<label for='fParam'>Param m:</label>
-<input type='range' name='fParam' max='300' min='0' ng-model='fParam' ng-change='changeBrush()'>
-<input type='text' size=3 maxlength=3 placeholder=fParam ng-model=fParam>
-</p>
-<p>
-<label for='lambda'>lambda</label>
-<input type='range' name='lambda' max='300' min='0' ng-model='lambda' ng-change='changeBrush()'>
-<input type='text' size=3 maxlength=10 placeholder=lambda ng-model=lambda>
-</p>
 
 </body>
 </html>
