@@ -33,7 +33,7 @@ var mainCtr = function($scope){
     $scope.colors = ['red', 'blue', 'green', 'orange', 'violet', 'black'];
     $scope.currentColor = 'red';
 
-    $scope.brushes = ['onepoint', 'random', 'Gausssian'];
+    $scope.brushes = ['onepoint', 'random', 'Gaussian'];
     $scope.currentBrush = 'random';
 
     $scope.canvasTop = 1;
@@ -54,7 +54,7 @@ var mainCtr = function($scope){
         }
         */
         for(i=0; i<points.length; i++){
-            for(var j=0; j<20; j++){
+            for(var j=0; j<points[i].length; j++){
                 drawPoint(canvas, context, points[i][j].x, points[i][j].y, points[i][j].color);
                 scaled = $scope.rescale(points[i][j]);
                 data += scaled.x.toFixed(3) + ' ' + scaled.y.toFixed(3) + ' ' + points[i][j].color + "\n";
@@ -110,7 +110,9 @@ var mainCtr = function($scope){
                 case 'onepoint':
                     tmpx = e.offsetX; 
                     tmpy = e.offsetY;
-                    points.push({x: tmpx, y: tmpy, color: $scope.currentColor});
+                    tmpary = Array();
+                    tmpary.push({x: tmpx, y: tmpy, color: $scope.currentColor});
+                    points.push(tmpary);
                     break;
                 case 'random':
                     rMax2 = Math.pow($scope.radius,2);
@@ -118,7 +120,7 @@ var mainCtr = function($scope){
                     thMax = $scope.eangl*Math.PI/180;
                     thMin = $scope.sangl*Math.PI/180;
                     tmprot = $scope.rotate*Math.PI/180;
-                    tmplist = Array();
+                    tmpary = Array();
                     for(var i=0; i<$scope.num; i++){
                         tmpR = Math.floor(Math.random()*(rMax2 - rMin2) + rMin2);
                         tmpTh = Math.random()*(thMax - thMin) + thMin;
@@ -129,23 +131,25 @@ var mainCtr = function($scope){
                         tmpx2 = tmpx*Math.cos(tmprot) - tmpy*Math.sin(tmprot);
                         tmpy2 = tmpx*Math.sin(tmprot) + tmpy*Math.cos(tmprot);
                         //points.push({x: tmpx2+e.offsetX , y: tmpy2+e.offsetY, color: $scope.currentColor});
-                        tmplist.push({x: tmpx2+e.offsetX , y: tmpy2+e.offsetY, color: $scope.currentColor});
+                        tmpary.push({x: tmpx2+e.offsetX , y: tmpy2+e.offsetY, color: $scope.currentColor});
                     }
-                    points.push(tmplist);
+                    points.push(tmpary);
                     break;
                 case 'Gaussian':
                     muX = e.offsetX; 
                     muY = e.offsetY;
                     s = $scope.radius;
+                    tmpary = Array();
                     for(var i=0; i<$scope.num; i++){
                         x = Math.random();
                         y = Math.random();
                         c = Math.sqrt(-2.0 * Math.log(x));
                         z1 = c * Math.cos(2.0 * Math.PI * y) * s + muX;
                         z2 = c * Math.sin(2.0 * Math.PI * y) * s + muY;
-                        console.log(z1);
-                        points.push({x: z1, y: z2, color: $scope.currentColor});
+                        //points.push({x: z1, y: z2, color: $scope.currentColor});
+                        tmpary.push({x: z1, y: z2, color: $scope.currentColor});
                     }
+                    points.push(tmpary);
                     break;
                 default :
                     break;
